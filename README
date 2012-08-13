@@ -1,0 +1,20 @@
+Here's Adam wifi-only device tree for android CM10.
+
+Make sure you have adam_common tree downloaded
+
+Copy to android/device/notionink/adam/
+
+run extract-files.sh or copy-files.sh that'll create your vendor directory
+
+go back to source root
+
+Shell Type: ". build/envsetup.sh"
+
+Let it finish.
+
+Shell Type: "lunch cm_adam-userdebug"
+
+Wait for it to get done.
+
+Then type: "time make -j16" (replace 16 with whatever your machine can handle.)
+
