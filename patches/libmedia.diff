@@ -1,0 +1,58 @@
+diff --git a/frameworks/av/include/media/AudioSystem.h b/frameworks/av/include/media/AudioSystem.h
+index e2662f2..d79975c 100644
+--- a/frameworks/av/include/media/AudioSystem.h
++++ b/frameworks/av/include/media/AudioSystem.h
+@@ -27,6 +27,13 @@
+ /* XXX: Should be include by all the users instead */
+ #include <media/AudioParameter.h>
+ 
++// ## Compatibility enum to be able to use ICS propietary libs with JB - As soon as JB
++//  propietary libs are released, this declaration can go away...
++extern "C" {
++typedef enum { a1, b1 } audio_policy_output_flags_t;
++};
++// ##
++
+ namespace android {
+ 
+ typedef void (*audio_error_callback)(status_t err);
+@@ -190,6 +197,16 @@ public:
+                                         audio_format_t format = AUDIO_FORMAT_DEFAULT,
+                                         uint32_t channels = AUDIO_CHANNEL_OUT_STEREO,
+                                         audio_output_flags_t flags = AUDIO_OUTPUT_FLAG_NONE);
++	
++	// ## Compatibility fn to be able to use ICS propietary libs with JB - As soon as JB
++	//  propietary libs are released, this fn can go away...
++	static audio_io_handle_t getOutput(audio_stream_type_t stream, 
++										uint32_t samplingRate, 
++										uint32_t format, 
++										uint32_t channels, 
++										audio_policy_output_flags_t flags);
++	// ##
++										
+     static status_t startOutput(audio_io_handle_t output,
+                                 audio_stream_type_t stream,
+                                 int session = 0);
+diff --git a/frameworks/av/media/libmedia/AudioSystem.cpp b/frameworks/av/media/libmedia/AudioSystem.cpp
+index 4c41ba5..c7646db 100644
+--- a/frameworks/av/media/libmedia/AudioSystem.cpp
++++ b/frameworks/av/media/libmedia/AudioSystem.cpp
+@@ -596,6 +596,18 @@ audio_io_handle_t AudioSystem::getOutput(audio_stream_type_t stream,
+     return aps->getOutput(stream, samplingRate, format, channels, flags);
+ }
+ 
++// ## Compatibility fn to be able to use ICS propietary libs with JB - As soon as JB
++//    propietary libs are released, this fn can go away...
++audio_io_handle_t AudioSystem::getOutput(audio_stream_type_t stream, 
++										uint32_t samplingRate, 
++										uint32_t format, 
++										uint32_t channels, 
++										audio_policy_output_flags_t flags)
++{
++	return getOutput(stream,samplingRate,(audio_format_t)format,channels,(audio_output_flags_t)flags);
++}									
++// ##
++
+ status_t AudioSystem::startOutput(audio_io_handle_t output,
+                                   audio_stream_type_t stream,
+                                   int session)

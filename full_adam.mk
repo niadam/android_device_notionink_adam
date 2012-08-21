@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Camera
 PRODUCT_PACKAGES := \
     Camera \
+    LegacyCamera \
     SpareParts \
     PQiToggle \
     Development #\
-    #libhuaweigeneric-ril \
-    #Stk \
-    #Mms
+#    libhuaweigeneric-ril \
+#    Stk \
+#    Mms \
 
 DEVICE_PACKAGE_OVERLAYS += device/notionink/adam/overlay
 
@@ -31,9 +31,10 @@ DEVICE_PACKAGE_OVERLAYS += device/notionink/adam/overlay
 #    device/notionink/adam/files/wwlan_select.sh:/system/bin/wwlan_select.sh \
 #    device/notionink/adam/files/rild:/system/bin/rild
 
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
 
-# Inherit from ADAM device common
+# Inherit from ADAM common device tree
 $(call inherit-product, device/notionink/adam_common/device-common.mk)
 
 # The gps config appropriate for this device
@@ -41,13 +42,9 @@ $(call inherit-product, device/common/gps/gps_us_supl.mk)
 
 $(call inherit-product-if-exists, vendor/notionink/adam/device-vendor.mk)
 
-PRODUCT_NAME := cm_adam
+PRODUCT_NAME := full_adam
 PRODUCT_DEVICE := adam
 PRODUCT_BRAND := NotionInk
 PRODUCT_MODEL := Notion Ink ADAM
 
 $(call inherit-product, device/notionink/adam_common/google_apps.mk)
-
-# Inherit some common CM stuff.
-$(call inherit-product, vendor/cm/config/common_full_tablet_wifionly.mk)
-
