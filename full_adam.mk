@@ -42,9 +42,17 @@ $(call inherit-product, device/common/gps/gps_us_supl.mk)
 
 $(call inherit-product-if-exists, vendor/notionink/adam/device-vendor.mk)
 
-PRODUCT_NAME := full_adam
+PRODUCT_NAME := aokp_adam
 PRODUCT_DEVICE := adam
 PRODUCT_BRAND := NotionInk
 PRODUCT_MODEL := Notion Ink ADAM
 
 $(call inherit-product, device/notionink/adam_common/google_apps.mk)
+
+# Inherit some common AOKP stuff.
+$(call inherit-product, vendor/aokp/configs/common_tablet.mk)
+#$(call inherit-product, vendor/aokp/configs/gsm.mk)
+
+PRODUCT_COPY_FILES +=  \
+    vendor/aokp/prebuilt/bootanimation/bootanimation_1024_600.zip:system/media/bootanimation.zip
+
