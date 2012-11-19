@@ -1,0 +1,126 @@
+diff --git a/frameworks/native/include/gui/SurfaceComposerClient.h b/frameworks/native/include/gui/SurfaceComposerClient.h
+index ae5d69a..e7730e2 100644
+--- a/frameworks/native/include/gui/SurfaceComposerClient.h
++++ b/frameworks/native/include/gui/SurfaceComposerClient.h
+@@ -33,6 +33,11 @@
+ 
+ namespace android {
+ 
++// ## Compatibility typedef fn to be able to use ICS propietary libs with JB - As soon as JB
++//  propietary libs are released, this def can go away...
++typedef int32_t DisplayID;
++
++
+ // ---------------------------------------------------------------------------
+ 
+ class DisplayInfo;
+@@ -67,6 +72,10 @@ public:
+     // Get information about a display
+     static status_t getDisplayInfo(const sp<IBinder>& display, DisplayInfo* info);
+ 
++	// ## Compatibility fn to be able to use ICS propietary libs with JB - As soon as JB
++	//  propietary libs are released, this fn can go away...
++	static status_t getDisplayInfo(int32_t displayId, DisplayInfo* info);
++	
+     /* triggers screen off and waits for it to complete */
+     static void blankDisplay(const sp<IBinder>& display);
+ 
+@@ -84,6 +93,16 @@ public:
+             PixelFormat format, // pixel-format desired
+             uint32_t flags = 0  // usage flags
+     );
++	
++	// ## Compatibility fn to be able to use ICS propietary libs with JB - As soon as JB
++	//  propietary libs are released, this fn can go away...
++    sp<SurfaceControl> createSurface(
++            DisplayID display,	// Display to create this surface on
++            uint32_t w,         // width in pixel
++            uint32_t h,         // height in pixel
++            PixelFormat format, // pixel-format desired
++            uint32_t flags      // usage flags
++    );
+ 
+     //! Create a display
+     static sp<IBinder> createDisplay(const String8& displayName, bool secure);
+diff --git a/frameworks/native/libs/gui/SurfaceComposerClient.cpp b/frameworks/native/libs/gui/SurfaceComposerClient.cpp
+index 80dd6ee..7f5b1b0 100644
+--- a/frameworks/native/libs/gui/SurfaceComposerClient.cpp
++++ b/frameworks/native/libs/gui/SurfaceComposerClient.cpp
+@@ -460,6 +460,34 @@ sp<SurfaceControl> SurfaceComposerClient::createSurface(
+     return result;
+ }
+ 
++// ## Compatibility fn to be able to use ICS propietary libs with JB4.2 - As soon as JB
++//  propietary libs are released, this fn can go away...
++sp<SurfaceControl> SurfaceComposerClient::createSurface(
++		DisplayID display,	// Display to create this surface on
++		uint32_t w,         // width in pixel
++		uint32_t h,         // height in pixel
++		PixelFormat format, // pixel-format desired
++		uint32_t flags      // usage flags
++)
++{
++	String8 name;
++	const size_t SIZE = 128;
++	char buffer[SIZE];
++	snprintf(buffer, SIZE, "<pid_%d>", getpid());
++	name.append(buffer);
++	
++	sp<SurfaceControl> result;
++    if (mStatus == NO_ERROR) {
++        ISurfaceComposerClient::surface_data_t data;
++        sp<ISurface> surface = mClient->createSurface(&data, name,
++                w, h, format, flags);
++        if (surface != 0) {
++            result = new SurfaceControl(this, surface, data);
++        }
++    }
++    return result;
++}
++
+ sp<IBinder> SurfaceComposerClient::createDisplay(const String8& displayName,
+         bool secure) {
+     return Composer::getInstance().createDisplay(displayName, secure);
+@@ -583,6 +611,42 @@ void SurfaceComposerClient::unblankDisplay(const sp<IBinder>& token) {
+     ComposerService::getComposerService()->unblank(token);
+ }
+ 
++// ## Compatibility fn to be able to use ICS propietary libs with JB - As soon as JB
++//  propietary libs are released, this fn can go away...
++status_t SurfaceComposerClient::getDisplayInfo(int32_t displayId, DisplayInfo* info)
++{
++	// ## JB4.1 order: Needed to be able to use older graphics libs
++	struct JB41DisplayInfo {
++		uint32_t w;
++		uint32_t h;
++		PixelFormatInfo pixelFormatInfo;
++		uint8_t orientation;
++		uint8_t reserved[3];
++		float fps;
++		float density;	
++		float xdpi;
++		float ydpi;
++	};
++	
++	// Get display information with the new struct
++	struct DisplayInfo newinfo;
++	memset(&newinfo,0,sizeof(newinfo));
++	status_t res = getDisplayInfo(getBuiltInDisplay(displayId), &newinfo);
++	
++	// Convert it to the old one
++	memset(info,0,sizeof(struct JB41DisplayInfo));
++	((struct JB41DisplayInfo*)(info))->w = newinfo.w;
++	((struct JB41DisplayInfo*)(info))->h = newinfo.h;
++	((struct JB41DisplayInfo*)(info))->pixelFormatInfo = newinfo.pixelFormatInfo;
++	((struct JB41DisplayInfo*)(info))->orientation = newinfo.orientation;
++	((struct JB41DisplayInfo*)(info))->fps = newinfo.fps;
++	((struct JB41DisplayInfo*)(info))->density = newinfo.density;
++	((struct JB41DisplayInfo*)(info))->xdpi = newinfo.xdpi;
++	((struct JB41DisplayInfo*)(info))->ydpi = newinfo.ydpi;
++	
++	return res;
++}
++
+ // ----------------------------------------------------------------------------
+ 
+ ScreenshotClient::ScreenshotClient()
