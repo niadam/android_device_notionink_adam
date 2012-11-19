@@ -47,4 +47,4 @@ PRODUCT_DEVICE := adam
 PRODUCT_BRAND := NotionInk
 PRODUCT_MODEL := Notion Ink ADAM
 
-$(call inherit-product, device/notionink/adam_common/google_apps.mk)
+#$(call inherit-product, device/notionink/adam_common/google_apps.mk)
