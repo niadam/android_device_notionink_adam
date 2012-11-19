@@ -1,5 +1,7 @@
 Here's Adam wifi-only device tree for android JB AOSP.
 
+Currently for JB 4.2
+
 Make sure you have adam_common tree downloaded
 
 Copy to android/device/notionink/adam/
@@ -7,6 +9,9 @@ Copy to android/device/notionink/adam/
 run extract-files.sh or copy-files.sh that'll create your vendor directory
 
 go back to source root
+
+Execute: patch -p1 device/notionink/adam/patches/<patch>.diff
+for each diff in patches dir
 
 Shell Type: ". build/envsetup.sh"
 
