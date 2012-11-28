@@ -1,0 +1,75 @@
+diff --git a/device/common/libbt/Android.mk b/device/common/libbt/Android.mk
+index 4b5ce4d..4f5accd 100644
+--- a/device/common/libbt/Android.mk
++++ b/device/common/libbt/Android.mk
+@@ -42,5 +42,11 @@ endif
+ ifeq ($(TARGET_PRODUCT), full_wingray)
+     include $(LOCAL_PATH)/conf/moto/wingray/Android.mk
+ endif
++ifeq ($(TARGET_PRODUCT), full_adam)
++    include $(LOCAL_PATH)/conf/notionink/adam/Android.mk
++endif
++ifeq ($(TARGET_PRODUCT), full_adam_3g)
++    include $(LOCAL_PATH)/conf/notionink/adam/Android.mk
++endif
+
+ endif # BOARD_HAVE_BLUETOOTH_BCM
+diff --git a/device/common/libbt/conf/notionink/adam/Android.mk b/device/common/libbt/conf/notionink/adam/Android.mk
+new file mode 100644
+index 0000000..974e213
+--- /dev/null
++++ b/device/common/libbt/conf/notionink/adam/Android.mk
+@@ -0,0 +1,14 @@
++LOCAL_PATH := $(call my-dir)
++
++include $(CLEAR_VARS)
++
++LOCAL_MODULE := bt_vendor.conf
++LOCAL_MODULE_CLASS := ETC
++LOCAL_MODULE_PATH := $(TARGET_OUT)/etc/bluetooth
++
++LOCAL_MODULE_TAGS := eng
++
++LOCAL_SRC_FILES := $(LOCAL_MODULE)
++
++include $(BUILD_PREBUILT)
++
+diff --git a/device/common/libbt/conf/notionink/adam/bt_vendor.conf b/device/common/libbt/conf/notionink/adam/bt_vendor.conf
+new file mode 100644
+index 0000000..94fa0cd
+--- /dev/null
++++ b/device/common/libbt/conf/notionink/adam/bt_vendor.conf
+@@ -0,0 +1,5 @@
++# UART device port where Bluetooth controller is attached
++UartPort = /dev/ttyHS2
++
++# Firmware patch file location
++FwPatchFilePath = /etc/firmware/
+diff --git a/device/common/libbt/include/vnd_adam.txt b/device/common/libbt/include/vnd_adam.txt
+new file mode 100755
+index 0000000..f5eb1d0
+--- /dev/null
++++ b/device/common/libbt/include/vnd_adam.txt
+@@ -0,0 +1,8 @@
++BLUETOOTH_UART_DEVICE_PORT = "/dev/ttyHS2"
++FW_PATCHFILE_LOCATION = "/etc/firmware/"
++LPM_IDLE_TIMEOUT_MULTIPLE = 5
++BTVND_DBG = FALSE
++BTHW_DBG = TRUE
++VNDUSERIAL_DBG = FALSE
++UPIO_DBG = FALSE
++SCO_PCM_IF_CLOCK_RATE = 2
+diff --git a/device/common/libbt/include/vnd_adam_3g.txt b/device/common/libbt/include/vnd_adam_3g.txt
+new file mode 100755
+index 0000000..f5eb1d0
+--- /dev/null
++++ b/device/common/libbt/include/vnd_adam_3g.txt
+@@ -0,0 +1,8 @@
++BLUETOOTH_UART_DEVICE_PORT = "/dev/ttyHS2"
++FW_PATCHFILE_LOCATION = "/etc/firmware/"
++LPM_IDLE_TIMEOUT_MULTIPLE = 5
++BTVND_DBG = FALSE
++BTHW_DBG = TRUE
++VNDUSERIAL_DBG = FALSE
++UPIO_DBG = FALSE
++SCO_PCM_IF_CLOCK_RATE = 2
