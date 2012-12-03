@@ -59,7 +59,7 @@ index 0000000..f5eb1d0
 +VNDUSERIAL_DBG = FALSE
 +UPIO_DBG = FALSE
 +SCO_PCM_IF_CLOCK_RATE = 2
-+UART_TARGET_BAUD_RATE = 2700000
++UART_TARGET_BAUD_RATE = 921600
 diff --git a/device/common/libbt/include/vnd_adam_3g.txt b/device/common/libbt/include/vnd_adam_3g.txt
 new file mode 100755
 index 0000000..f5eb1d0
@@ -74,4 +74,4 @@ index 0000000..f5eb1d0
 +VNDUSERIAL_DBG = FALSE
 +UPIO_DBG = FALSE
 +SCO_PCM_IF_CLOCK_RATE = 2
-+UART_TARGET_BAUD_RATE = 2700000
++UART_TARGET_BAUD_RATE = 921600
