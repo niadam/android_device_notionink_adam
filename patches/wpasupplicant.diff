@@ -1,0 +1,55 @@
+diff --git a/external/wpa_supplicant_8/src/drivers/driver_nl80211.c b/external/wpa_supplicant_8/src/drivers/driver_nl80211.c
+index dc87438..ac93e23 100644
+--- a/external/wpa_supplicant_8/src/drivers/driver_nl80211.c
++++ b/external/wpa_supplicant_8/src/drivers/driver_nl80211.c
+@@ -6801,8 +6801,11 @@ static int wpa_driver_nl80211_associate(
+ 	if (params->mode == IEEE80211_MODE_AP)
+ 		return wpa_driver_nl80211_ap(drv, params);
+ 
+-	if (params->mode == IEEE80211_MODE_IBSS)
++	if (params->mode == IEEE80211_MODE_IBSS) {
++		if (wpa_driver_nl80211_set_mode(priv, NL80211_IFTYPE_ADHOC) < 0)
++			return -1;
+ 		return wpa_driver_nl80211_ibss(drv, params);
++	}
+ 
+ 	if (!(drv->capa.flags & WPA_DRIVER_FLAGS_SME)) {
+ 		enum nl80211_iftype nlmode = params->p2p ?
+diff --git a/external/wpa_supplicant_8/wpa_supplicant/events.c b/external/wpa_supplicant_8/wpa_supplicant/events.c
+index c886037..eabe08f 100644
+--- a/external/wpa_supplicant_8/wpa_supplicant/events.c
++++ b/external/wpa_supplicant_8/wpa_supplicant/events.c
+@@ -702,9 +702,10 @@ static struct wpa_ssid * wpa_scan_res_match(struct wpa_supplicant *wpa_s,
+ 			continue;
+ 		}
+ 
+-		if (bss->caps & IEEE80211_CAP_IBSS) {
++		if ((bss->caps & IEEE80211_CAP_IBSS) &&
++				ssid->mode != IEEE80211_MODE_IBSS) {
+ 			wpa_dbg(wpa_s, MSG_DEBUG, "   skip - IBSS (adhoc) "
+-				"network");
++				"mismatch");
+ 			continue;
+ 		}
+ 
+@@ -873,6 +874,12 @@ wpa_supplicant_pick_new_network(struct wpa_supplicant *wpa_s)
+ 	int prio;
+ 	struct wpa_ssid *ssid;
+ 
++// Don't try to automatically start a new ad-hoc network if no network
++// is available on Android. It doesn't make sense as it'll fail anyway
++// because nothing will reply to the DHCP request. (It'll also
++// repeatedly fail because the frequency is not set and it'll keep
++// retrying draining battery.)
++#ifndef ANDROID
+ 	for (prio = 0; prio < wpa_s->conf->num_prio; prio++) {
+ 		for (ssid = wpa_s->conf->pssid[prio]; ssid; ssid = ssid->pnext)
+ 		{
+@@ -883,6 +890,7 @@ wpa_supplicant_pick_new_network(struct wpa_supplicant *wpa_s)
+ 				return ssid;
+ 		}
+ 	}
++#endif
+ 	return NULL;
+ }
+ 
