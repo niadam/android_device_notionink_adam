@@ -2,6 +2,15 @@ diff --git a/frameworks/native/services/surfaceflinger/DisplayHardware/HWCompose
 index 31d731e..c5888e2 100644
 --- a/frameworks/native/services/surfaceflinger/DisplayHardware/HWComposer.cpp
 +++ b/frameworks/native/services/surfaceflinger/DisplayHardware/HWComposer.cpp
+@@ -17,7 +17,7 @@
+ #define ATRACE_TAG ATRACE_TAG_GRAPHICS
+
+ // Uncomment this to remove support for HWC_DEVICE_API_VERSION_0_3 and older
+-#define HWC_REMOVE_DEPRECATED_VERSIONS 1
++//#define HWC_REMOVE_DEPRECATED_VERSIONS 1
+
+ #include <stdint.h>
+ #include <stdio.h>
 @@ -46,6 +46,12 @@
  #include "SurfaceFlinger.h"
  #include <utils/CallStack.h>
