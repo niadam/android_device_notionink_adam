@@ -1,20 +1,20 @@
 diff --git a/packages/apps/Settings/res/values/config.xml b/packages/apps/Settings/res/values/config.xml
-index a08079f..0acac37 100755
+index 9bad6cb..715ffe8 100755
 --- a/packages/apps/Settings/res/values/config.xml
 +++ b/packages/apps/Settings/res/values/config.xml
-@@ -39,4 +39,7 @@
-          very long strings too. -->
-     <integer name="maximum_user_dictionary_word_length" translatable="false">48</integer>
+@@ -41,4 +41,7 @@
+     <bool name="config_show_expandedDesktop">false</bool>
  
+     <!-- **** CYANOGENMOD ADDITIONS END **** -->
 +    <!-- Ad-hoc network support. Some devices (unpatched bcmdhd) have broken
 +         ad-hoc support and so we should hide ad-hoc network on those devices -->
 +    <bool name="config_show_adhoc_network">true</bool>
  </resources>
 diff --git a/packages/apps/Settings/res/values/strings.xml b/packages/apps/Settings/res/values/strings.xml
-index 1202ebd..d633de3 100644
+index 8e6f5d7..d9ab240 100644
 --- a/packages/apps/Settings/res/values/strings.xml
 +++ b/packages/apps/Settings/res/values/strings.xml
-@@ -1333,6 +1333,13 @@
+@@ -1405,6 +1405,13 @@
      <!-- Substring of wifi status for wifi with authentication.  This version is for when the
           string is not first in the list (lowercase in english) -->
      <string name="wifi_secured_second_item">, secured with <xliff:g id="wifi_security_short">%1$s</xliff:g></string>
@@ -92,10 +92,10 @@ index 2598a0e..e27f048 100644
          switch (mAccessPointSecurity) {
              case AccessPoint.SECURITY_NONE:
 diff --git a/packages/apps/Settings/src/com/android/settings/wifi/WifiSettings.java b/packages/apps/Settings/src/com/android/settings/wifi/WifiSettings.java
-index de42f2a..50aee2b 100644
+index aedb79e..ab5ddc0 100644
 --- a/packages/apps/Settings/src/com/android/settings/wifi/WifiSettings.java
 +++ b/packages/apps/Settings/src/com/android/settings/wifi/WifiSettings.java
-@@ -136,6 +136,8 @@ public class WifiSettings extends SettingsPreferenceFragment
+@@ -141,6 +141,8 @@ public class WifiSettings extends SettingsPreferenceFragment
  
      private TextView mEmptyView;
  
@@ -104,16 +104,16 @@ index de42f2a..50aee2b 100644
      /* Used in Wifi Setup context */
  
      // this boolean extra specifies whether to disable the Next button when not connected
-@@ -359,6 +361,8 @@ public class WifiSettings extends SettingsPreferenceFragment
+@@ -402,6 +404,8 @@ public class WifiSettings extends SettingsPreferenceFragment
+             registerForContextMenu(getListView());
          }
          setHasOptionsMenu(true);
- 
-+        mShowAdhoc = getResources().getBoolean(R.bool.config_show_adhoc_network);
 +
-         // After confirming PreferenceScreen is available, we call super.
-         super.onActivityCreated(savedInstanceState);
++	mShowAdhoc = getResources().getBoolean(R.bool.config_show_adhoc_network);
      }
-@@ -672,9 +676,13 @@ public class WifiSettings extends SettingsPreferenceFragment
+ 
+     @Override
+@@ -772,9 +776,13 @@ public class WifiSettings extends SettingsPreferenceFragment
          final List<ScanResult> results = mWifiManager.getScanResults();
          if (results != null) {
              for (ScanResult result : results) {
