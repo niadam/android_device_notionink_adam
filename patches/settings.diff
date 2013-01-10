@@ -83,14 +83,17 @@ diff --git a/packages/apps/Settings/src/com/android/settings/wifi/WifiConfigCont
 index 2598a0e..e27f048 100644
 --- a/packages/apps/Settings/src/com/android/settings/wifi/WifiConfigController.java
 +++ b/packages/apps/Settings/src/com/android/settings/wifi/WifiConfigController.java
-@@ -318,6 +318,7 @@ public class WifiConfigController implements TextWatcher,
+@@ -315,8 +315,10 @@ public class WifiConfigController implements TextWatcher,
+         } else if (mAccessPoint.networkId == INVALID_NETWORK_ID) {
+             config.SSID = AccessPoint.convertToQuotedString(
+                     mAccessPoint.ssid);
++           config.mode = mAccessPoint.mode;
          } else {
              config.networkId = mAccessPoint.networkId;
++           config.mode = mAccessPoint.mode;
          }
-+        config.mode = mAccessPoint.mode;
- 
+
          switch (mAccessPointSecurity) {
-             case AccessPoint.SECURITY_NONE:
 diff --git a/packages/apps/Settings/src/com/android/settings/wifi/WifiSettings.java b/packages/apps/Settings/src/com/android/settings/wifi/WifiSettings.java
 index de42f2a..50aee2b 100644
 --- a/packages/apps/Settings/src/com/android/settings/wifi/WifiSettings.java
