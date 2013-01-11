@@ -11,10 +11,10 @@ index 9bad6cb..715ffe8 100755
 +    <bool name="config_show_adhoc_network">true</bool>
  </resources>
 diff --git a/packages/apps/Settings/res/values/strings.xml b/packages/apps/Settings/res/values/strings.xml
-index 8e6f5d7..d9ab240 100644
+index bf5135d..c1b001e 100644
 --- a/packages/apps/Settings/res/values/strings.xml
 +++ b/packages/apps/Settings/res/values/strings.xml
-@@ -1405,6 +1405,13 @@
+@@ -1407,6 +1407,13 @@
      <!-- Substring of wifi status for wifi with authentication.  This version is for when the
           string is not first in the list (lowercase in english) -->
      <string name="wifi_secured_second_item">, secured with <xliff:g id="wifi_security_short">%1$s</xliff:g></string>
@@ -29,7 +29,7 @@ index 8e6f5d7..d9ab240 100644
      <!-- Do not translate.  Concise terminology for wifi with WEP security -->
      <string name="wifi_security_short_wep">WEP</string>
 diff --git a/packages/apps/Settings/src/com/android/settings/wifi/AccessPoint.java b/packages/apps/Settings/src/com/android/settings/wifi/AccessPoint.java
-index 5a7a768..5f05d0c 100644
+index 4a73543..90ba9ed 100644
 --- a/packages/apps/Settings/src/com/android/settings/wifi/AccessPoint.java
 +++ b/packages/apps/Settings/src/com/android/settings/wifi/AccessPoint.java
 @@ -61,6 +61,7 @@ class AccessPoint extends Preference {
@@ -37,27 +37,27 @@ index 5a7a768..5f05d0c 100644
      int security;
      int networkId;
 +    int mode;
+     boolean autoConnect;
      boolean wpsAvailable = false;
  
-     PskType pskType = PskType.UNKNOWN;
-@@ -187,6 +188,7 @@ class AccessPoint extends Preference {
+@@ -188,6 +189,7 @@ class AccessPoint extends Preference {
          bssid = config.BSSID;
          security = getSecurity(config);
          networkId = config.networkId;
 +        mode = config.mode;
+         autoConnect = config.autoConnect;
          mRssi = Integer.MAX_VALUE;
          mConfig = config;
-     }
-@@ -199,6 +201,8 @@ class AccessPoint extends Preference {
+@@ -201,6 +203,8 @@ class AccessPoint extends Preference {
          if (security == SECURITY_PSK)
              pskType = getPskType(result);
          networkId = -1;
 +        mode = result.capabilities.contains("[IBSS]") ?
 +            WifiConfiguration.Mode.ADHOC : WifiConfiguration.Mode.INFRASTRUCTURE;
+         autoConnect = true;
          mRssi = result.level;
          mScanResult = result;
-     }
-@@ -359,6 +363,14 @@ class AccessPoint extends Preference {
+@@ -362,6 +366,14 @@ class AccessPoint extends Preference {
                      summary.append(context.getString(R.string.wifi_wps_available_second_item));
                  }
              }
@@ -72,7 +72,7 @@ index 5a7a768..5f05d0c 100644
              setSummary(summary.toString());
          }
      }
-@@ -376,5 +388,6 @@ class AccessPoint extends Preference {
+@@ -379,5 +391,6 @@ class AccessPoint extends Preference {
          mConfig = new WifiConfiguration();
          mConfig.SSID = AccessPoint.convertToQuotedString(ssid);
          mConfig.allowedKeyManagement.set(KeyMgmt.NONE);
@@ -80,10 +80,10 @@ index 5a7a768..5f05d0c 100644
      }
  }
 diff --git a/packages/apps/Settings/src/com/android/settings/wifi/WifiConfigController.java b/packages/apps/Settings/src/com/android/settings/wifi/WifiConfigController.java
-index 2598a0e..e27f048 100644
+index ae0a0ff..be2f22c 100644
 --- a/packages/apps/Settings/src/com/android/settings/wifi/WifiConfigController.java
 +++ b/packages/apps/Settings/src/com/android/settings/wifi/WifiConfigController.java
-@@ -315,8 +315,10 @@ public class WifiConfigController implements TextWatcher,
+@@ -339,8 +339,10 @@ public class WifiConfigController implements TextWatcher,
          } else if (mAccessPoint.networkId == INVALID_NETWORK_ID) {
              config.SSID = AccessPoint.convertToQuotedString(
                      mAccessPoint.ssid);
@@ -92,7 +92,7 @@ index 2598a0e..e27f048 100644
              config.networkId = mAccessPoint.networkId;
 +           config.mode = mAccessPoint.mode;
          }
-
+ 
          switch (mAccessPointSecurity) {
 diff --git a/packages/apps/Settings/src/com/android/settings/wifi/WifiSettings.java b/packages/apps/Settings/src/com/android/settings/wifi/WifiSettings.java
 index aedb79e..ab5ddc0 100644

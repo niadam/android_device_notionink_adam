@@ -42,5 +42,5 @@ for p in $(find device/notionink/adam/patches/ -name "*.diff")
 		echo "" 
 	done
 echo "Cleaning .orig and .rej files if any..."
-find . \( -name \*cpp.orig -o -name \*xml.orig -o -name \*.h.orig -o -name \*.rej \) -delete
+find . \( -name \*cpp.orig -o -name \*xml.orig -o -name \*.h.orig -o -name \*.java.orig -o -name \*.rej \) -delete
 echo ""

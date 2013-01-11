@@ -1,8 +1,8 @@
 diff --git a/frameworks/base/wifi/java/android/net/wifi/WifiConfigStore.java b/frameworks/base/wifi/java/android/net/wifi/WifiConfigStore.java
-index e9f3480..49dac18 100644
+index 4267eb2..19efaed 100644
 --- a/frameworks/base/wifi/java/android/net/wifi/WifiConfigStore.java
 +++ b/frameworks/base/wifi/java/android/net/wifi/WifiConfigStore.java
-@@ -1121,6 +1121,32 @@ class WifiConfigStore {
+@@ -1156,6 +1156,32 @@ class WifiConfigStore {
                  break setVariables;
              }
  
@@ -35,7 +35,7 @@ index e9f3480..49dac18 100644
              for (WifiConfiguration.EnterpriseField field
                      : config.enterpriseFields) {
                  String varName = field.varName();
-@@ -1347,6 +1373,15 @@ class WifiConfigStore {
+@@ -1408,6 +1434,15 @@ class WifiConfigStore {
              }
          }
  
@@ -52,10 +52,10 @@ index e9f3480..49dac18 100644
          config.wepTxKeyIndex = -1;
          if (!TextUtils.isEmpty(value)) {
 diff --git a/frameworks/base/wifi/java/android/net/wifi/WifiConfiguration.java b/frameworks/base/wifi/java/android/net/wifi/WifiConfiguration.java
-index 0a846fd..a89a280 100644
+index 7ef85b9..3580970 100644
 --- a/frameworks/base/wifi/java/android/net/wifi/WifiConfiguration.java
 +++ b/frameworks/base/wifi/java/android/net/wifi/WifiConfiguration.java
-@@ -248,6 +248,23 @@ public class WifiConfiguration implements Parcelable {
+@@ -250,6 +250,23 @@ public class WifiConfiguration implements Parcelable {
          public static final String[] strings = { "current", "disabled", "enabled" };
      }
  
@@ -79,7 +79,7 @@ index 0a846fd..a89a280 100644
      /** @hide */
      public static final int DISABLED_UNKNOWN_REASON                         = 0;
      /** @hide */
-@@ -328,6 +345,12 @@ public class WifiConfiguration implements Parcelable {
+@@ -330,6 +347,12 @@ public class WifiConfiguration implements Parcelable {
      public boolean hiddenSSID;
  
      /**
@@ -92,23 +92,23 @@ index 0a846fd..a89a280 100644
       * The set of key management protocols supported by this configuration.
       * See {@link KeyMgmt} for descriptions of the values.
       * Defaults to WPA-PSK WPA-EAP.
-@@ -405,6 +428,7 @@ public class WifiConfiguration implements Parcelable {
+@@ -412,6 +435,7 @@ public class WifiConfiguration implements Parcelable {
          BSSID = null;
          priority = 0;
          hiddenSSID = false;
-+        mode = Mode.INFRASTRUCTURE;
++	mode = Mode.INFRASTRUCTURE;
+         status = WifiConfiguration.Status.DISABLED;
          disableReason = DISABLED_UNKNOWN_REASON;
          allowedKeyManagement = new BitSet();
-         allowedProtocols = new BitSet();
-@@ -579,6 +603,7 @@ public class WifiConfiguration implements Parcelable {
+@@ -611,6 +635,7 @@ public class WifiConfiguration implements Parcelable {
              wepTxKeyIndex = source.wepTxKeyIndex;
              priority = source.priority;
              hiddenSSID = source.hiddenSSID;
 +            mode = source.mode;
+             status = source.status;
              allowedKeyManagement   = (BitSet) source.allowedKeyManagement.clone();
              allowedProtocols       = (BitSet) source.allowedProtocols.clone();
-             allowedAuthAlgorithms  = (BitSet) source.allowedAuthAlgorithms.clone();
-@@ -607,6 +632,7 @@ public class WifiConfiguration implements Parcelable {
+@@ -641,6 +666,7 @@ public class WifiConfiguration implements Parcelable {
          dest.writeInt(wepTxKeyIndex);
          dest.writeInt(priority);
          dest.writeInt(hiddenSSID ? 1 : 0);
@@ -116,7 +116,7 @@ index 0a846fd..a89a280 100644
  
          writeBitSet(dest, allowedKeyManagement);
          writeBitSet(dest, allowedProtocols);
-@@ -638,6 +664,7 @@ public class WifiConfiguration implements Parcelable {
+@@ -673,6 +699,7 @@ public class WifiConfiguration implements Parcelable {
                  config.wepTxKeyIndex = in.readInt();
                  config.priority = in.readInt();
                  config.hiddenSSID = in.readInt() != 0;
